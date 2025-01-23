@@ -11,28 +11,10 @@ const navigation = [
 ];
 
 export default function Sidebar() {
-  const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-gray-900 text-white p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">音乐播放器</h1>
-      </div>
-      <nav>
-        {navigation.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`block py-2 px-4 rounded-lg mb-2 ${
-              pathname === item.href
-                ? 'bg-gray-800 text-white'
-                : 'hover:bg-gray-800'
-            }`}
-          >
-            {item.name}
-          </Link>
-        ))}
-      </nav>
+    <div>
+      <h1>侧边栏</h1>
     </div>
   );
 }

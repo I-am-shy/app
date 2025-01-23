@@ -1,19 +1,20 @@
-const sqlite3 = require('sqlite3').verbose()
-const path = require('path')
+import sqlite from "sqlite3"
+const sqlite3 = sqlite.verbose()
 
 class Database {
-  constructor(dbName) {
-    const dbPath = path.join(__dirname, dbName + '.db')
-    this.db = new sqlite3.Database(dbPath, err => {
+  private db: sqlite.Database
+  constructor(dbName: string) {
+    const dbPath = "./"+dbName+".db"
+    this.db = new sqlite3.Database(dbPath, (err) => {
       if (err) console.error('数据库连接失败：', err)
       else console.log('数据库连接成功')
     })
   }
 
   // 执行 SQL 的通用方法
-  run(sql, params = []) {
+  run(sql: string, params: any[] = []): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err) {
+      this.db.run(sql, params, function(err: any) {
         if (err) reject(err)
         else resolve(this.lastID)
       })
@@ -21,7 +22,7 @@ class Database {
   }
 
   // 查询单条数据
-  get(sql, params = []) {
+  get(sql: string, params: any[] = []): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db.get(sql, params, (err, row) => {
         if (err) reject(err)
@@ -31,7 +32,7 @@ class Database {
   }
 
   // 查询多条数据
-  all(sql, params = []) {
+  all(sql: string, params: any[] = []): Promise<any> {
     return new Promise((resolve, reject) => {
       this.db.all(sql, params, (err, rows) => {
         if (err) reject(err)
@@ -54,7 +55,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('用户表创建成功')
+    console.log('用户表连接成功')
   }
 
   // 创建音乐表
@@ -69,7 +70,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('音乐表创建成功')
+    console.log('音乐表连接成功')
   }
 
   // 创建评论表
@@ -86,7 +87,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('评论表创建成功')
+    console.log('评论表连接成功')
   }
 
   // 创建收藏表
@@ -101,7 +102,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('收藏表创建成功')
+    console.log('收藏表连接成功')
   }
 
   // 创建公告表
@@ -115,7 +116,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('公告表创建成功')
+    console.log('公告表连接成功')
   }
 
   // 创建主题表
@@ -127,7 +128,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('主题表创建成功')
+    console.log('主题表连接成功')
   }
 
   // 初始化所有表
@@ -148,7 +149,7 @@ class Database {
 
   // 关闭数据库连接
   close() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.db.close(err => {
         if (err) reject(err)
         else resolve()
@@ -157,37 +158,4 @@ class Database {
   }
 }
 
-module.exports = Database
-
-// 创建数据库实例
-// const db = new Database('music_app')
-
-// 初始化所有表
-// db.initTables()
-
-// 插入一些数据
-// db.run('INSERT INTO users (name, role, username, password, avatar, info) VALUES (?, ?, ?, ?, ?, ?)', ['admin', 'admin', 'admin', 'admin', 'admin', 'admin'])
-// db.run('INSERT INTO songs (song_title, song_artist, song_lyric, file_path) VALUES (?, ?, ?, ?)', ['song1', 'artist1', 'lyric1', 'path1'])
-// db.run('INSERT INTO comments (user_id, song_id, comment_content) VALUES (?, ?, ?)', [1, 1, 'comment1'])
-// db.run('INSERT INTO favorites (user_id, song_id) VALUES (?, ?)', [1, 1])
-// db.run('INSERT INTO announcements (announcement_title, announcement_content) VALUES (?, ?)', ['announcement1', 'content1'])
-// db.run('INSERT INTO themes (theme_name, description) VALUES (?, ?)', ['theme1', 'description1'])
-
-// // 查询数据
-// async function queryData() {
-//   const users = db.all('SELECT * FROM users')
-//   const songs = db.all('SELECT * FROM songs')
-//   const comments = db.all('SELECT * FROM comments')
-//   const favorites = db.all('SELECT * FROM favorites')
-//   const announcements = db.all('SELECT * FROM announcements')
-//   const themes = db.all('SELECT * FROM themes')
-//   console.log(await users)
-//   console.log(await songs)
-//   console.log(await comments)
-//   console.log(await favorites)
-//   console.log(await announcements)
-//   console.log(await themes)
-
-// }
-
-// queryData()
+export default Database
