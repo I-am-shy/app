@@ -110,20 +110,40 @@ RESTful API设计
 推荐系统
 界面美化
 
+
 --- 
 
 # API 详细
 
 ## 用户管理
 
-- GET `/api/users` - 获取所有用户
-- GET `/api/users?id=1` - 获取指定用户
-- POST `/api/users` - 创建用户
-- PUT `/api/users?id=1` - 更新用户
-- DELETE `/api/users?id=1` - 删除用户
+- GET /api/users - 获取用户列表
+- GET /api/users?name="name" - 获取单个用户
+- POST /api/users - 创建用户
+- PUT /api/users?name="name" - 更新用户
+- DELETE /api/users?name="name" - 删除用户
+
+**请求参数:**
+  POST:
+  formData:
+    name: 用户名
+    role: 角色
+    username: 用户名
+    password: 密码
+    info: 信息
+    avatar: 头像
+  PUT:
+  formData:
+    name?: 用户名
+    role?: 角色
+    username?: 用户名
+    password?: 密码
+    info?: 信息
+    avatar?: 头像
 
 **响应格式：**
 ```json
+// 用户信息
 {
   "status": "200",
   "data": {
@@ -135,5 +155,11 @@ RESTful API设计
     "avatar": "avatar",
     "info": "info"
   }
+}
+
+// 操作结果
+{
+    "msg": "msg",
+    "status": 200
 }
 ```

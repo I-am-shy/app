@@ -1,3 +1,4 @@
+import { User, Song, Comment, Favorite, Announcement, Theme } from "./type"
 import sqlite from "sqlite3"
 const sqlite3 = sqlite.verbose()
 
@@ -12,11 +13,11 @@ class Database {
   }
 
   // 执行 SQL 的通用方法
-  run(sql: string, params: any[] = []): Promise<any> {
+  run(sql: string, params: any[] = []): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err: any) {
+      this.db.run(sql, params, function(err: Error) {
         if (err) reject(err)
-        else resolve(this.lastID)
+        else resolve(true)
       })
     })
   }
@@ -145,6 +146,150 @@ class Database {
       console.error('数据表初始化失败：', err)
       throw err
     }
+  }
+
+  // 获取用户列表
+  async getUsers(): Promise<User[]> {
+    return await this.all('SELECT * FROM users')
+  }
+
+  // 获取单个用户
+  async getUser(name: string): Promise<User> {
+    return await this.get('SELECT * FROM users WHERE name = ?', [name])
+  }
+
+  // 创建用户
+  async createUser(user: User): Promise<boolean> {
+    const existingUser = await this.get('SELECT * FROM users WHERE name = ?', [user.name])
+    if (existingUser) {
+      throw new Error('用户名已存在')
+    }
+
+    return await this.run('INSERT INTO users (name, role, username, password, avatar, info) VALUES (?, ?, ?, ?, ?, ?)', [user.name, user.role, user.username, user.password, user.avatar, user.info])
+  }
+
+  // 更新用户
+  async updateUser(name: string, user: User):Promise<boolean> {
+    const existingUser = await this.get('SELECT * FROM users WHERE name = ?', [name])
+    if (!existingUser) {
+      throw new Error('用户不存在')
+    }
+    return await this.run('UPDATE users SET name = ?, role = ?, username = ?, password = ?, avatar = ?, info = ? WHERE name = ?', [user.name, user.role, user.username, user.password, user.avatar, user.info, name])
+  }
+
+  // 删除用户
+  async deleteUser(name: string):Promise<boolean> {
+    return await this.run('DELETE FROM users WHERE name = ?', [name])
+  }
+
+  // 获取歌曲列表
+  async getSongs(): Promise<Song[]> {
+    return await this.all('SELECT * FROM songs')
+  }
+
+  // 获取单个歌曲
+  async getSong(title: string): Promise<Song> {
+    return await this.get('SELECT * FROM songs WHERE title = ?', [title])
+  }
+
+  // 创建歌曲
+  async createSong(song: Song) {
+    const existingSong = await this.get('SELECT * FROM songs WHERE title = ? AND artist = ?', [song.title,song.artist])
+    if (existingSong) {
+      throw new Error('歌曲已存在')
+    }
+    return await this.run('INSERT INTO songs (title, artist, lyric, path) VALUES (?, ?, ?, ?)', [song.title, song.artist, song.lyric, song.path])
+  }
+
+  // 更新歌曲
+  async updateSong(title: string, song: Song) {
+    const existingSong = await this.get('SELECT * FROM songs WHERE title = ? AND artist = ?', [song.title,song.artist])
+    if (!existingSong) {
+      throw new Error('歌曲不存在')
+    }
+    return await this.run('UPDATE songs SET title = ?, artist = ?, lyric = ?, path = ? WHERE title = ? AND artist = ?', [song.title, song.artist, song.lyric, song.path, title,song.artist])
+  }
+
+  // 删除歌曲
+  async deleteSong(title: string) {
+    return await this.run('DELETE FROM songs WHERE title = ?', [title])
+  }
+
+  // 获取歌曲的评论列表
+  async getComments(song_id: number): Promise<Comment[]> {
+    return await this.all('SELECT * FROM comments WHERE song_id = ?', [song_id])
+  }
+
+  // 创建评论
+  async createComment(comment: Comment) {
+    return await this.run('INSERT INTO comments (user_id, song_id, content) VALUES (?, ?, ?)', [comment.user_id, comment.song_id, comment.content])
+  }
+
+  // 删除评论(根据评论id,页面上需要保留评论id)
+  async deleteComment(comment_id: number) {
+    return await this.run('DELETE FROM comments WHERE comment_id = ?', [comment_id])
+  }
+
+  // 获取收藏列表
+  async getFavorites(user_id: number): Promise<Favorite[]> {
+    return await this.all('SELECT * FROM favorites WHERE user_id = ?', [user_id])
+  }
+
+  // 创建收藏
+  async createFavorite(favorite: Favorite) {
+    const existingFavorite = await this.get('SELECT * FROM favorites WHERE user_id = ? AND song_id = ?', [favorite.user_id, favorite.song_id])
+    if (existingFavorite) {
+      throw new Error('收藏已存在')
+    }
+    return await this.run('INSERT INTO favorites (user_id, song_id) VALUES (?, ?)', [favorite.user_id, favorite.song_id])
+  }
+
+  // 删除收藏
+  async deleteFavorite(user_id: number, song_id: number) {
+    return await this.run('DELETE FROM favorites WHERE user_id = ? AND song_id = ?', [user_id, song_id])
+  }
+
+  // 获取公告列表
+  async getAnnouncements(): Promise<Announcement[]> {
+    return await this.all('SELECT * FROM announcements')
+  }
+
+  // 创建公告
+  async createAnnouncement(announcement: Announcement) {
+    return await this.run('INSERT INTO announcements (title, content) VALUES (?, ?)', [announcement.title, announcement.content])
+  }
+
+  // 更新公告
+  async updateAnnouncement(title: string, announcement: Announcement) {
+    const existingAnnouncement = await this.get('SELECT * FROM announcements WHERE title = ?', [title])
+    if (!existingAnnouncement) {
+      throw new Error('公告不存在')
+    }
+    return await this.run('UPDATE announcements SET title = ?, content = ? WHERE title = ?', [announcement.title, announcement.content, title])
+  }
+
+  // 删除公告
+  async deleteAnnouncement(title: string) {
+    return await this.run('DELETE FROM announcements WHERE title = ?', [title])
+  }
+
+  // 获取主题列表
+  async getThemes(): Promise<Theme[]> {
+    return await this.all('SELECT * FROM themes')
+  }
+
+  // 创建主题
+  async createTheme(theme: Theme) {
+    const existingTheme = await this.get('SELECT * FROM themes WHERE name = ?', [theme.name])
+    if (existingTheme) {
+      throw new Error('主题已存在')
+    }
+    return await this.run('INSERT INTO themes (name, description) VALUES (?, ?)', [theme.name, theme.description])
+  }
+
+  // 删除主题
+  async deleteTheme(name: string) {
+    return await this.run('DELETE FROM themes WHERE name = ?', [name])
   }
 
   // 关闭数据库连接
