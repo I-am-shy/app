@@ -1,7 +1,28 @@
 "use client"
-import { useEffect } from "react";
+
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
+  // 渲染数据源
+  const [data, setData] = useState([
+    {
+      name: '总用户数',
+      value: 0,
+    },
+    {
+      name: '歌曲数据',
+      value: 0,
+    },
+    {
+      name: '总评论数',
+      value: 0,
+    },
+    {
+      name: '最新公告',
+      value: "公告",
+    },
+  ]);
+  // 获取后端数据
   useEffect(() => {
     const fetchUsers = async () => {
       const res = await fetch('/api/users', {
@@ -10,78 +31,49 @@ export default function DashboardPage() {
           'Content-Type': 'application/json'
         }
       })
-      const data = await res.json()
-      console.log(data)
+      const userData = await res.json()
+      console.log(userData)
+      setData((oldData)=>{
+        oldData[0].value = userData.data.length
+        return [...oldData]
+      }) 
     }
 
     fetchUsers()
   }, [])
 
-  const createUser = async (file: File) => {
-    console.log(file)
-    const formData = new FormData()
-    formData.append("avatar", file)
-    formData.append("name", 'tom')
-    formData.append("role", 'user')
-    formData.append("username", 'tom')
-    formData.append("password", '123456')
-    formData.append("info", '用户')
-    const res = await fetch('/api/users', {
-      method: 'POST',
-      body: formData
-    })
-    const data = await res.json()
-    console.log(data)
-  }
-  const deleteUser = async (name: string) => {
-    const res = await fetch(`/api/users?name=${name}`, {
-      method: 'DELETE',
-    })
-    const data = await res.json()
-    console.log(data)
-  }
-  const updateUser = async (name: string, updateUser: any) => {
-    const formData = new FormData()
-    for (const key in updateUser) {
-      formData.append(key, updateUser[key])
-    }
-    const res = await fetch(`/api/users?name=${name}`, {
-      method: 'PUT',
-      body: formData
-    })
-    const data = await res.json()
-    console.log(data)
-  }
-
   return (
-    <div>
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">控制台</h1>
-      <input type="file" placeholder="头像" id="file" />
-      <button onClick={async () => {
-        const file = document.getElementById('file') as HTMLInputElement
-        if (file.files) {
-          
-          await createUser(file.files[0])
-        }
-      }}>创建用户</button>
-      <button onClick={async () => {
-        await deleteUser('tom')
-      }}>删除用户</button>
-      <button onClick={async () => {
-        const file = document.getElementById('file') as HTMLInputElement
-        if (file.files && file.files[0]) {
-          await updateUser('tom', {
-            password: '123',
-            info: Date.now().toString(),
-            avatar: file.files[0]
-          })
-        }else{
-          await updateUser('tom', {
-            password: '123',
-            info: 'newInfo',
+
+      {/* 统计卡片区域 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {
+          data.map(item => {
+            return (<div key={item.name} className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-gray-500">{item.name}</h3>
+              <p className="text-2xl font-semibold">{item.value}</p>
+            </div>)
           })
         }
-      }}>更新用户</button>
+      </div>
+
+
+      {/* 数据列表区域 */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">最近活动</h2>
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="flex items-center p-4 border-b">
+              <div className="w-8 h-8 bg-gray-200 rounded-full mr-4"></div>
+              <div>
+                <h4 className="font-medium">活动标题 {item}</h4>
+                <p className="text-gray-500 text-sm">活动描述内容</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

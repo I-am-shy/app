@@ -20,13 +20,13 @@ export default function Sidebar() {
       </label>
       <div>
       <h1>侧边栏</h1>
-      <ul>
+      <nav>
         {
           navigation.map(item=>{
-            return (<li key={item.href}><Link href={{pathname:item.href}}>{item.name}</Link></li>)
+            return (<Link key={item.href} href={{pathname:item.href}}>{item.name}</Link>)
           })
         }
-      </ul>
+      </nav>
       </div>
     </div>
   );

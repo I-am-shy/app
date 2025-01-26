@@ -24,7 +24,11 @@ export async function POST(request: NextRequest) {
     for (const [key, value] of formData.entries()) {
       user[key] = value
     }
-    avatar = await uploadFile(user.avatar,"avatar")
+    if(user.avatar){
+      avatar = await uploadFile(user.avatar,"avatar")
+    }else{
+      avatar = "/user.svg"
+    }
     const data = await db.createUser({...user,avatar})
     if (data === true) {
       return NextResponse.json({ msg: '创建用户成功',status: 200 }, { status: 200 })
@@ -83,9 +87,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ msg: '用户名不能为空',status: 400 }, { status: 400 })
   }
   const user = await db.getUser(name)
+  if(user.role === "admin"){
+    return NextResponse.json({ msg: '管理员不能删除',status: 400 }, { status: 400 })
+  }
   const data = await db.deleteUser(name)// 删除用户
-  if (data === true) {
-    await deleteFile(user.avatar)// 删除服务端文件数据
+  if (data === true ) {
+    if(user.avatar){
+      await deleteFile(user.avatar)// 删除服务端文件数据
+    }
     return NextResponse.json({ msg: '删除用户成功',status: 200 }, { status: 200 })
   } else {
     return NextResponse.json({ msg: data,status: 500 }, { status: 500 })
