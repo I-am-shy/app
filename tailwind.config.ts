@@ -7,13 +7,21 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
+  daisyui: {
+    themes: ["light", "dark", {
+      myTheme: {
+        "primary": "#009ef9",
+        "secondary": "#e6b500",
+        "accent": "#0039ff",                 
+        "neutral": "#1c0410",                  
+        "base-100": "C1D4F8", 
+        "base-200": "C1D4F8",
+        "info": "#0066ff",
+        "success": "#7a9d00",                  
+        "warning": "#d26200",
+        "error": "#ff8183",
+      }
+    }],
   },
   plugins: [
     daisyui,

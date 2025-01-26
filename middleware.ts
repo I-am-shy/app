@@ -20,6 +20,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
+
+  if(pathname === '/'){// 重定向到首页
+    return NextResponse.redirect(new URL('/main', request.url))
+  }
+
   return NextResponse.next()
 }
 

@@ -12,6 +12,17 @@ body {
   background: rgb(var(--background-rgb));
 }
 
+/* 自定义样式 */
+.win{
+  display: flex;
+  position: relative;
+  width: 80%;
+  height: 80%;
+  border-width: 1px;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
 /* 自定义滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;

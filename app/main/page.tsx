@@ -1,9 +1,14 @@
-import { Suspense } from 'react';
+"use client"
 
-export default function MainPage() {
+
+export default function Home() {
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">发现音乐</h1>
-    </div>
+    <>
+        
+        <main className="flex-1 overflow-y-auto">
+          <h2 className="text-2xl font-bold mb-6">发现音乐</h2>
+        </main>
+    </>
   );
 }
