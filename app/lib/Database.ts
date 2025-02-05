@@ -189,30 +189,30 @@ class Database {
 
   // 获取单个歌曲
   async getSong(title: string): Promise<Song> {
-    return await this.get('SELECT * FROM songs WHERE title = ?', [title])
+    return await this.get('SELECT * FROM songs WHERE song_title = ?', [title])
   }
 
-  // 创建歌曲
+  // 新增歌曲
   async createSong(song: Song) {
-    const existingSong = await this.get('SELECT * FROM songs WHERE title = ? AND artist = ?', [song.title,song.artist])
+    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.title,song.artist])
     if (existingSong) {
       throw new Error('歌曲已存在')
     }
-    return await this.run('INSERT INTO songs (title, artist, lyric, path) VALUES (?, ?, ?, ?)', [song.title, song.artist, song.lyric, song.path])
+    return await this.run('INSERT INTO songs (song_title, song_artist, song_lyric, file_path) VALUES (?, ?, ?, ?)', [song.title, song.artist, song.lyric, song.path])
   }
 
   // 更新歌曲
   async updateSong(title: string, song: Song) {
-    const existingSong = await this.get('SELECT * FROM songs WHERE title = ? AND artist = ?', [song.title,song.artist])
+    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.title,song.artist])
     if (!existingSong) {
       throw new Error('歌曲不存在')
     }
-    return await this.run('UPDATE songs SET title = ?, artist = ?, lyric = ?, path = ? WHERE title = ? AND artist = ?', [song.title, song.artist, song.lyric, song.path, title,song.artist])
+    return await this.run('UPDATE songs SET song_title = ?, song_artist = ?, song_lyric = ?, file_path = ? WHERE song_title = ? AND song_artist = ?', [song.title, song.artist, song.lyric, song.path, title,song.artist])
   }
 
   // 删除歌曲
   async deleteSong(title: string) {
-    return await this.run('DELETE FROM songs WHERE title = ?', [title])
+    return await this.run('DELETE FROM songs WHERE song_title = ?', [title])
   }
 
   // 获取歌曲的评论列表
