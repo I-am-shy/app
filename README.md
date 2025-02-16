@@ -184,15 +184,58 @@ RESTful API设计
 }
 ```
 
+## 歌曲管理
+
+- GET /api/songs - 获取歌曲列表
+- GET /api/songs?title = "title" - 获取单个歌曲
+- POST /api/songs - 创建歌曲
+- PUT /api/songs?title = "title" - 更新歌曲
+- DELETE /api/songs?title = "title" - 删除歌曲
+
+**请求参数:**
+  POST:
+  formData:
+    title: 歌名
+    artist: 歌手
+    lyric: 歌词
+    file: 歌曲文件
+  PUT:
+  formData:
+    title?: 歌名
+    artist?: 歌手
+    lyric?: 歌词
+    file?: 歌曲文件
+**响应格式：**
+
+```json
+// 歌曲信息
+{
+  "status": "200",
+  "data": {
+    "song_id": "song_id",
+    "song_title": "title",
+    "song_artist": "artist",
+    "song_lyric": "lyric",
+    "file_path": "file_path"
+  }
+}
+```
+
+
+
 
 --- 
-
 
 # 界面
 
 仿桌面程序的界面风格：切换小窗口,可拖动,
 
-1. 仪表盘
+1. 仪表盘s
   - 查看后台数据（用户，音乐，评论，公告）
   - 修改用户权限
   - 修改数据（用户，音乐，评论，公告）
+
+
+
+**注意事项：**
+文件在客户端选中后，调用接口上传到服务器，服务器会返回文件路径，后续调用接口时存储文件路径(优化接口)

@@ -194,20 +194,20 @@ class Database {
 
   // 新增歌曲
   async createSong(song: Song) {
-    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.title,song.artist])
+    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.song_title,song.song_artist])
     if (existingSong) {
       throw new Error('歌曲已存在')
     }
-    return await this.run('INSERT INTO songs (song_title, song_artist, song_lyric, file_path) VALUES (?, ?, ?, ?)', [song.title, song.artist, song.lyric, song.path])
+    return await this.run('INSERT INTO songs (song_title, song_artist, song_lyric, file_path) VALUES (?, ?, ?, ?)', [song.song_title, song.song_artist, song.song_lyric, song.file_path])
   }
 
   // 更新歌曲
   async updateSong(title: string, song: Song) {
-    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.title,song.artist])
+    const existingSong = await this.get('SELECT * FROM songs WHERE song_title = ? AND song_artist = ?', [song.song_title,song.song_artist])
     if (!existingSong) {
       throw new Error('歌曲不存在')
     }
-    return await this.run('UPDATE songs SET song_title = ?, song_artist = ?, song_lyric = ?, file_path = ? WHERE song_title = ? AND song_artist = ?', [song.title, song.artist, song.lyric, song.path, title,song.artist])
+    return await this.run('UPDATE songs SET song_title = ?, song_artist = ?, song_lyric = ?, file_path = ? WHERE song_title = ? AND song_artist = ?', [song.song_title, song.song_artist, song.song_lyric, song.file_path, title,song.song_artist])
   }
 
   // 删除歌曲

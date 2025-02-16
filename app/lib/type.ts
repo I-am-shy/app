@@ -7,10 +7,10 @@ interface User {
   info: string
 }
 interface Song {
-  title: string
-  artist: string
-  lyric: string
-  path: string
+  song_title: string
+  song_artist: string
+  song_lyric: string
+  file_path: string
 }
 
 interface Comment {
