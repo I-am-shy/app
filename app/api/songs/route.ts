@@ -27,7 +27,7 @@ export async function POST(request: NextRequest){
   }
   // 查询歌曲是否已经存在
   const songData = await db.getSong(song.song_title)
-  if (songData.song_title === song.song_title || songData.song_artist === song.song_artist) {
+  if (songData && (songData.song_title === song.song_title || songData.song_artist === song.song_artist)) {
     return NextResponse.json({ msg: '歌曲已存在',code: 400 }, { status: 400 })
   } else {
     // 上传歌曲文件
