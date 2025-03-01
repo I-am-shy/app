@@ -191,6 +191,9 @@ class Database {
   async getSong(title: string): Promise<Song> {
     return await this.get('SELECT * FROM songs WHERE song_title = ?', [title])
   }
+  async getSongById(song_id: number): Promise<Song> {
+    return await this.get('SELECT * FROM songs WHERE song_id = ?', [song_id])
+  }
 
   // 新增歌曲
   async createSong(song: Song) {
@@ -260,12 +263,12 @@ class Database {
   }
 
   // 更新公告
-  async updateAnnouncement(title: string, announcement: Announcement) {
-    const existingAnnouncement = await this.get('SELECT * FROM announcements WHERE title = ?', [title])
+  async updateAnnouncement(old_title: string, announcement: Announcement) {
+    const existingAnnouncement = await this.get('SELECT * FROM announcements WHERE title = ?', [old_title])
     if (!existingAnnouncement) {
       throw new Error('公告不存在')
     }
-    return await this.run('UPDATE announcements SET title = ?, content = ? WHERE title = ?', [announcement.title, announcement.content, title])
+    return await this.run('UPDATE announcements SET title = ?, content = ? WHERE title = ?', [announcement.title, announcement.content, old_title])
   }
 
   // 删除公告
@@ -286,10 +289,18 @@ class Database {
     }
     return await this.run('INSERT INTO themes (name, description) VALUES (?, ?)', [theme.name, theme.description])
   }
+  // 更新主题
+  async updateTheme(old_theme_name: string, theme: Theme) {
+    const existingTheme = await this.get('SELECT * FROM themes WHERE name = ?', [old_theme_name])
+    if (!existingTheme) {
+      throw new Error('主题不存在')
+    }
+    return await this.run('UPDATE themes SET name = ?, description = ? WHERE name = ?', [theme.name, theme.description, old_theme_name])
+  }
 
   // 删除主题
-  async deleteTheme(name: string) {
-    return await this.run('DELETE FROM themes WHERE name = ?', [name])
+  async deleteTheme(theme_name: string) {
+    return await this.run('DELETE FROM themes WHERE name = ?', [theme_name])
   }
 
   // 关闭数据库连接

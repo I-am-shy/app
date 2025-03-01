@@ -144,7 +144,7 @@ RESTful API设计
 - DELETE /api/users?name="name" - 删除用户
 
 **请求参数:**
-  POST:
+POST:
   formData:
     name: 用户名
     role: 角色
@@ -152,7 +152,7 @@ RESTful API设计
     password: 密码
     info: 信息
     avatar: 头像
-  PUT:
+PUT:
   formData:
     name?: 用户名
     role?: 角色
@@ -165,22 +165,25 @@ RESTful API设计
 ```json
 // 用户信息
 {
-  "status": "200",
-  "data": {
-    "user_id": "user_id",
-    "name": "name",
-    "role": "role",
-    "username": "username",
-    "password": "password",
-    "avatar": "avatar",
-    "info": "info"
-  }
+  
+  "data": [
+    {
+      "user_id": "user_id",
+      "name": "name",
+      "role": "role",
+      "username": "username",
+      "password": "password",
+      "avatar": "avatar",
+      "info": "info"
+    }
+  ],
+  "code": "200"
 }
 
 // 操作结果
 {
     "msg": "msg",
-    "status": 200
+    "code": 400
 }
 ```
 
@@ -193,13 +196,13 @@ RESTful API设计
 - DELETE /api/songs?title = "title" - 删除歌曲
 
 **请求参数:**
-  POST:
+POST:
   formData:
     title: 歌名
     artist: 歌手
     lyric: 歌词
     file: 歌曲文件
-  PUT:
+PUT:
   formData:
     title?: 歌名
     artist?: 歌手
@@ -210,19 +213,136 @@ RESTful API设计
 ```json
 // 歌曲信息
 {
-  "status": "200",
-  "data": {
-    "song_id": "song_id",
-    "song_title": "title",
-    "song_artist": "artist",
-    "song_lyric": "lyric",
-    "file_path": "file_path"
-  }
+  "data": [
+    {
+      "song_id": "song_id",
+      "song_title": "title",
+      "song_artist": "artist",
+      "song_lyric": "lyric",
+      "file_path": "file_path"
+    }
+  ],
+  "code": "200"
 }
 ```
 
+## 评论管理
 
+- GET /api/comments?song_id="song_id" - 获取歌曲评论
+- POST /api/comments?song_id="song_id" - 创建评论
+- DELETE /api/comments?comment_id="comment_id" - 删除评论
 
+**请求参数:**
+POST:
+  Data:
+    user_id: 用户id
+    comment_content: 评论内容
+
+**响应格式：**
+```json
+// 评论信息
+{
+  "data": [
+    {
+      "comment_id": "comment_id",
+      "song_id": "song_id",
+      "comment_content": "comment_content",
+      "created_at": "created_at"
+    }
+  ],
+  "code": "200"
+}
+```
+
+## 收藏管理
+
+- GET /api/favorites?user_id="user_id" - 获取用户收藏
+- POST /api/favorites?song_id="song_id" - 创建收藏
+- DELETE /api/favorites?song_id="song_id" - 删除收藏
+
+**请求参数:**
+POST:
+  Data:
+    user_id: 用户id
+    song_id: 歌曲id
+
+**响应格式：**  
+```json
+// 收藏信息
+{
+  "data": [
+    {
+      "song_id": "song_id",
+      "song_title": "song_title",
+      "song_artist": "song_artist",
+      "song_lyric": "song_lyric",
+      "file_path": "file_path"
+    }
+  ],
+  "code": "200"
+}
+```
+
+## 公告管理
+
+- GET /api/announcements - 获取所有公告
+- POST /api/announcements - 创建公告
+- PUT /api/announcements - 更新公告
+- DELETE /api/announcements?title="title" - 删除公告
+
+**请求参数:**
+POST:
+  Data:
+    title: 公告标题
+    content: 公告内容
+
+PUT:
+  Data:
+    old_title: 旧标题
+    title: 新标题
+    content: 新内容
+
+**响应格式：**
+```json
+// 公告信息
+{
+  "data": [
+    { 
+      "announcement_id": "announcement_id",
+      "announcement_title": "announcement_title",
+      "announcement_content": "announcement_content",
+      "created_at": "created_at"
+    }
+  ],
+  "code": "200"
+} 
+```
+
+## 主题管理
+
+- GET /api/themes - 获取所有主题
+- POST /api/themes - 创建主题
+- DELETE /api/themes?theme_name="theme_name" - 删除主题
+
+**请求参数:**
+POST:
+  Data:
+    theme_name: 主题名称
+    description: 主题描述
+
+**响应格式：**
+```json
+// 主题信息
+{
+  "data": [
+    { 
+      "theme_name": "theme_name",
+      "description": "description"
+    }
+  ],
+  "code": "200"
+}
+``` 
 
 --- 
 
