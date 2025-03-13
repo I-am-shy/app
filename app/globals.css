@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@plugin "daisyui";
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -16,8 +17,8 @@ body {
 .win{
   display: flex;
   position: relative;
-  width: 80%;
-  height: 80%;
+  width: 85%;
+  height: 85%;
   border-width: 1px;
   border-radius: 5px;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);

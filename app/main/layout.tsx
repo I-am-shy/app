@@ -9,8 +9,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const mainRef = useRef<HTMLDivElement>(null) //使用泛型解决ref为null的报错
-  const winRef = useRef<HTMLDivElement>(null) //使用泛型解决ref为null的报错
+  const mainRef = useRef<HTMLDivElement>(null) //使用断言解决ref为null的报错
+  const winRef = useRef<HTMLDivElement>(null) //使用断言解决ref为null的报错
 
   useEffect(() => {
     if (mainRef.current) {
@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-base-100" ref={mainRef} >
-        <div className="win bg-base-200" ref={winRef} draggable>{/* 拟桌面程序界面 */}
+        <div className="win bg-base-200 " ref={winRef} draggable>{/* 拟桌面程序界面 */}
           {/* <input type="checkbox" value="dark" className="toggle theme-controller" /> */}
           <div className="left w-[15%] h-[100%] ">
             <Sidebar />
