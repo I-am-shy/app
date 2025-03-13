@@ -18,11 +18,7 @@ export default function Sidebar() {
           <h1>侧边栏</h1>
           <div className="divider"></div>
           <ul className="menu bg-base-200 rounded-box w-full">
-            {
-              navigation.map(item => {
-                return (<li><Link key={item.href} href={{ pathname: item.href }}>{item.name}</Link></li>)
-              })
-            }
+            {navigation.map(item => (<li key={item.href}><Link  href={{ pathname: item.href }}>{item.name}</Link></li>))}
           </ul>
         </div>
       </div>
