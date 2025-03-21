@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import Player from "./Player";
+import { drag } from "../utils/drag";
+
 
 export default function RootLayout({
   children,
@@ -13,40 +15,7 @@ export default function RootLayout({
   const winRef = useRef<HTMLDivElement>(null) //使用断言解决ref为null的报错
 
   useEffect(() => {
-    if (mainRef.current) {
-      mainRef.current.addEventListener("dragover", (e) => {
-        e.preventDefault()
-      });
-    }
-    if (winRef.current) {
-      // 记录鼠标移动的距离
-      let moveX = 0;
-      let moveY = 0;
-      winRef.current.addEventListener("dragstart", (e) => {
-        const current = winRef.current as HTMLElement;
-        if (current) {
-          moveX = e.clientX - current.offsetLeft;
-          moveY = e.clientY - current.offsetTop;
-        }
-      });
-      winRef.current.addEventListener("drag", (e) => {
-        const target = e.target as HTMLElement;
-        if (target) {
-          target.style.cursor = "move";
-          target.style.opacity = "0";
-          target.style.position = "absolute";
-          target.style.left = `${e.clientX - moveX}px`;
-          target.style.top = `${e.clientY - moveY}px`;
-        }
-      });
-      winRef.current.addEventListener("dragend", (e) => {
-        const target = e.target as HTMLElement;
-        if (target) {
-          target.style.cursor = "default";
-          target.style.opacity = "1";
-        }
-      });
-    }
+    drag(winRef.current as HTMLElement, mainRef.current as HTMLElement)
   }, [])
 
   return (

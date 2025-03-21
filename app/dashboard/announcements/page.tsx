@@ -1,31 +1,24 @@
 "use client"
+import { useState, useEffect } from "react";
 
-import { Song } from "@/app/lib/type";
-import { useEffect, useState } from "react";
 
-export default function SongsPage() {
-  const [songs, setSongs] = useState<Song[]>([])
+export default function Announcements() {
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+
   useEffect(() => {
-    const fetchSongs = async () => {
-      const res = await fetch('/api/songs', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      const data = await res.json()
-      console.log(data)
-
-      setSongs(data.data)
-    }
-    fetchSongs()
-  }, [])
+    const fetchAnnouncements = async () => {
+      const res = await fetch("/api/announcements");
+      const data = await res.json();
+      console.log(data);
+      setAnnouncements(data.data);
+    };
+    fetchAnnouncements();
+  }, []);
 
   return (
-    <>
-      <div>
-        <h1>音乐管理</h1>
-        <div className="overflow-x-auto">
+    <div>
+      <h1>公告管理</h1>
+      <div className="overflow-x-auto">
           <table className="table">
             {/* head */}
             <thead>
@@ -35,19 +28,17 @@ export default function SongsPage() {
                     <input type="checkbox" className="checkbox" />
                   </label>
                 </th>
-                <th>音乐封面</th>
-                <th>音乐名称</th>
-                <th>歌手</th>
-                <th>音乐信息</th>
-                <th>音乐文件</th>
+                <th>标题</th>
+                <th>内容</th>
                 <th>操作</th>
+                <th>最后修改时间</th>
               </tr>
             </thead>
             <tbody>
               {
-                songs.map(song => {
+                announcements.map(announcement => {
                   return (
-                    <tr key={song.song_title}>
+                    <tr key={announcement.announcement_id}>
                       <th>
                         <label>
                           <input type="checkbox" className="checkbox" />
@@ -62,17 +53,14 @@ export default function SongsPage() {
                       </td>
                       <td>
                         <div className="flex items-center gap-3">
-                          <div className="font-bold">{song.song_title}</div>
+                          <div className="font-bold">{announcement.announcement_title}</div>
                         </div>
                       </td>
                       <td>
-                        <div>{song.song_artist}</div>
+                        <div>{announcement.announcement_content}</div>
                       </td>
                       <td>
-                        <div>{song.song_lyric}</div>
-                      </td>
-                      <td>
-                        <div>{song.file_path}</div>
+                        <div>{announcement.created_at}</div>
                       </td>
                       <td>
                         <button className="btn btn-sm">编辑</button>
@@ -83,7 +71,7 @@ export default function SongsPage() {
             </tbody>
           </table>
         </div>
-      </div>
-    </>
+    </div>
   );
 }
+
