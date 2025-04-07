@@ -25,7 +25,7 @@ export function drag(parentEl: HTMLElement, childEl: HTMLElement) {
   childEl.addEventListener("drag", (e) => {
     // 获取正在拖拽的可拖拽元素
     const target = e.target as HTMLElement;
-    if (target && target.tagName !== "A" && target.tagName !== "IMG") {// 排除默认可拖拽的元素
+    if (target && target.tagName !== "A" && target.tagName !== "IMG" && target.tagName !== "INPUT") {// 排除默认可拖拽的元素
       target.style.cursor = "move";
       target.style.opacity = "0";
       target.style.position = "absolute";
@@ -37,7 +37,7 @@ export function drag(parentEl: HTMLElement, childEl: HTMLElement) {
   childEl.addEventListener("dragend", (e) => {
     // 获取正在拖拽的可拖拽元素
     const target = e.target as HTMLElement;
-    if (target && target.tagName !== "A" && target.tagName !== "IMG") {// 排除默认可拖拽的元素
+    if (target && target.tagName !== "A" && target.tagName !== "IMG" && target.tagName !== "INPUT") {// 排除默认可拖拽的元素
       target.style.cursor = "default";
       target.style.opacity = "1";
     }

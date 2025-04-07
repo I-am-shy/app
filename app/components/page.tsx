@@ -7,7 +7,7 @@ import Toggle from "./Toggle";
 import "./style.css";
 import Sortable from 'sortablejs';
 import { useEffect, useState, useRef } from "react";
-
+import Input from "./Input";
 // 组件预览 
 export default function Page() {
 
@@ -27,6 +27,11 @@ export default function Page() {
       component: Toggle,
       props: {},
     },
+    {
+      name: "Input",
+      component: Input,
+      props: {},
+    }
   ]);
 
   const sortableRef = useRef(null);

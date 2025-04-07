@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import Sidebar from "./Sidebar";
 import Player from "./Player";
 import { drag } from "../utils/drag";
+import Input from "../components/Input";
+import Bot from "../components/Bot";
 
 
 export default function RootLayout({
@@ -21,15 +23,22 @@ export default function RootLayout({
   return (
     <>
       <div className="flex justify-center items-center h-screen bg-base-100" ref={mainRef} >
-        <div className="win bg-base-200 " ref={winRef} draggable>{/* 拟桌面程序界面 */}
-          {/* <input type="checkbox" value="dark" className="toggle theme-controller" /> */}
-          <div className="left w-[15%] h-[100%] ">
-            <Sidebar />
+        <div className="win bg-base-200 rounded-lg shadow-xl flex flex-col  w-[90%] h-[90%] mb-10 overflow-auto" ref={winRef} draggable>{/* 拟桌面程序界面 */}
+          <div className="win-header h-10 bg-gray-100 flex items-center  border-b px-4 py-2">
+            <Bot />
+            <Input />
           </div>
-          <div className="main w-[auto] h-[100%]">
-            {children}
+          
+          <div className="win-content flex flex-1 h-full">
+            <div className="left w-[200px] h-full border-r">
+              <Sidebar />
+            </div>
+            <div className="main flex-1 h-full overflow-y-auto p-4">
+              {children}
+            </div>
           </div>
-          <div className="down absolute bottom-0 left-0">
+          
+          <div className="win-footer bg-white border-t  px-4">
             <Player />
           </div>
         </div>
