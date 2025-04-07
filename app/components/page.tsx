@@ -20,7 +20,10 @@ export default function Page() {
     {
       name: "Progress",
       component: Progress,
-      props: {},
+      props: {
+        currentTime: "10",
+        totalTime: "100",
+      },
     },
     {
       name: "Toggle",
@@ -67,7 +70,7 @@ export default function Page() {
       >
         {components.map((component, index) => (
           <div className="item" key={component.name}>
-            <component.component />
+            <component.component {...component.props} />
           </div>
         ))}
       </div>

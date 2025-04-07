@@ -24,7 +24,7 @@ export default function RootLayout({
     <>
       <div className="flex justify-center items-center h-screen bg-base-100" ref={mainRef} >
         <div className="win bg-base-200 rounded-lg shadow-xl flex flex-col  w-[90%] h-[90%] mb-10 overflow-auto" ref={winRef} draggable>{/* 拟桌面程序界面 */}
-          <div className="win-header h-10 bg-gray-100 flex items-center  border-b px-4 py-2">
+          <div className="win-header h-10 bg-gray-100 flex items-center  border-b px-2 py-2">
             <Bot />
             <Input />
           </div>
@@ -38,7 +38,7 @@ export default function RootLayout({
             </div>
           </div>
           
-          <div className="win-footer bg-white border-t  px-4">
+          <div className="win-footer bg-white border-t  px-2">
             <Player />
           </div>
         </div>
