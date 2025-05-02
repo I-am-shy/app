@@ -41,7 +41,7 @@ export default function LoginPage() {
 
 
   const handleLogin = async () => {
-    // 登录逻辑
+    // 登录逻辑，发送请求到/api/auth，登录成功后生成token存放到cookie中
 
     const response = await fetch('/api/auth',{
       method: 'POST',
@@ -49,7 +49,6 @@ export default function LoginPage() {
     });
     const data = await response.json();
     if(data.code === 200){
-
       router.push('/main');
     }
     else{

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     if(data.data.password === user.password){
       const token = getToken({name:user.name,role:data.data.role},"abc",60*60*24)
       const response = NextResponse.json({ code: 200, message: '登录成功', token })
-      response.cookies.set('token',getToken({name:user.name,role:data.data.role},"abc",60*60*24))
+      response.cookies.set('token',token)
       return response
     }
     else{
