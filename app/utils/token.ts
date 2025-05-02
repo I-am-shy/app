@@ -66,25 +66,27 @@ function verifyToken(token: string, secretKey: string) {
   return token === newToken;
 }
 
-// 需要加密的数据
-const data = { 
-  username: 'john',
-  role: 'user'
-};
+// // 需要加密的数据
+// const data = { 
+//   username: 'john',
+//   role: 'user'
+// };
 
-// 密钥
-const secretKey = 'abc'; 
+// // 密钥
+// const secretKey = 'abc'; 
 
-// 生成token
-const token = getToken(data, secretKey, 5);
+// // 生成token
+// const token = getToken(data, secretKey, 5);
 
-// console.log(token);
+// // console.log(token);
 
-// 验证token
-setTimeout(() => {
-  console.log(verifyToken(token, secretKey) ? '验证通过' : '验证失败');
-},1000);
+// // 验证token
+// setTimeout(() => {
+//   console.log(verifyToken(token, secretKey) ? '验证通过' : '验证失败');
+// },1000);
 
-setTimeout(() => {
-  console.log(verifyToken(token, secretKey) ? '验证通过' : '验证失败');
-},5000);
+// setTimeout(() => {
+//   console.log(verifyToken(token, secretKey) ? '验证通过' : '验证失败');
+// },5000);
+
+export { getToken, verifyToken }

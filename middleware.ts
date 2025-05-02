@@ -1,27 +1,40 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
-  // 获取token
-  const token = "123"
+  const cookie = request.cookies.get('token')
+
+  const verifyToken = async () => {
+
+    const response = await fetch(`${request.nextUrl.origin}/api/auth`,{
+      headers: {
+        'Cookie': `token=${cookie?.value}`
+      }
+    })
+    const Auth = await response.json()
+    console.log(Auth)
+    return Auth.code === 200
+  }
+  const isLogin = await verifyToken()
+
 
   // 需要登录的路由
-  const authRoutes = ['/my', '/dashboard']
-  
+  const authRoutes = ['/main/my', '/main','/dashboard']
+
   // 已登录用户不能访问登录页
-  if (pathname === '/login' && token) {
+  if (pathname === '/login' && isLogin) {
     return NextResponse.redirect(new URL('/main', request.url))
   }
 
   // 未登录用户访问需要认证的页面
-  if (authRoutes.some(route => pathname.startsWith(route)) && !token) {
+  if (authRoutes.some(route => pathname.startsWith(route)) && !isLogin) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
 
-  if(pathname === '/'){// 重定向到首页
+  if (pathname === '/') {// 重定向到首页
     return NextResponse.redirect(new URL('/main', request.url))
   }
 

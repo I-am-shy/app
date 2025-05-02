@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
     const data = await db.createUser({...user,avatar})
     if (data === true) {
-      return NextResponse.json({ msg: '创建用户成功',code: 200 }, { status: 200 })
+      return NextResponse.json({ msg: '创建用户成功',code: 200}, { status: 200 })
     } else {
       return NextResponse.json({ msg: data,code: 500 }, { status: 500 })
     }

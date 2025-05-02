@@ -1,12 +1,12 @@
 import { User, Song, Comment, Favorite, Announcement, Theme } from "./type"
-import sqlite from "sqlite3"
-const sqlite3 = sqlite.verbose()
+import sqlite3 from "sqlite3"
+const sqlite = sqlite3.verbose()
 
 class Database {
-  private db: sqlite.Database
+  private db: sqlite3.Database
   constructor(dbName: string) {
     const dbPath = "./"+dbName+".db"
-    this.db = new sqlite3.Database(dbPath, (err) => {
+    this.db = new sqlite.Database(dbPath, (err) => {
       if (err) console.error('数据库连接失败：', err)
       else console.log('数据库连接成功')
     })

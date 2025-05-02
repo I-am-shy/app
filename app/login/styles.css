@@ -1,0 +1,92 @@
+@keyframes float {
+  0% {
+    transform: translateY(500px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+    transform: translateY(250px) translateX(-100px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.music-notes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.note {
+  position: absolute;
+  font-size: 36px;
+  color: rgba(239, 68, 68, 0.5);
+  animation: float 8s linear infinite;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 为每个音符设置不同的起始位置、颜色和动画延迟 */
+.note-1 { right: 10%; animation-delay: 0s; color: rgba(239, 68, 68, 0.6); }
+.note-2 { right: 30%; animation-delay: 1.5s; color: rgba(220, 38, 38, 0.5); }
+.note-3 { right: 50%; animation-delay: 3s; color: rgba(239, 68, 68, 0.6); }
+.note-4 { right: 20%; animation-delay: 4.5s; color: rgba(220, 38, 38, 0.5); }
+.note-5 { right: 40%; animation-delay: 2s; color: rgba(239, 68, 68, 0.6); }
+.note-6 { right: 60%; animation-delay: 3.5s; color: rgba(220, 38, 38, 0.5); }
+
+/* 表单切换动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.form-field {
+  animation: slideIn 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.form-field:nth-child(1) { animation-delay: 0.1s; }
+.form-field:nth-child(2) { animation-delay: 0.2s; }
+.form-field:nth-child(3) { animation-delay: 0.3s; }
+
+.form-title {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.login-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/default.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  filter: grayscale(30%);
+} 
