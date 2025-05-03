@@ -14,7 +14,6 @@ export async function middleware(request: NextRequest) {
       }
     })
     const Auth = await response.json()
-    console.log(Auth)
     return Auth.code === 200
   }
   const isLogin = await verifyToken()

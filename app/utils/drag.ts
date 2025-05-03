@@ -1,45 +1,87 @@
-
 /**
- * 实现一个元素在另一个元素上拖拽，确保拖拽效果，请使用父子元素
- * @param parentEl HTMLElement 父元素
- * @param childEl HTMLElement 子元素
+ * 实现窗口拖拽，只允许通过 header 区域拖拽
+ * @param windowEl HTMLElement 窗口元素
+ * @param headerEl HTMLElement header元素
  */
-export function drag(parentEl: HTMLElement, childEl: HTMLElement) {
-  // 确保子元素可拖拽
-  childEl.draggable = true;
-  // 记录拖拽时鼠标和父元素的相对位置
-  const parentElPosition = {
-    x: 0,
-    y: 0
+export function drag(windowEl: HTMLElement, containerEl: HTMLElement) {
+  let isDragging = false;
+  let currentX: number;
+  let currentY: number;
+  let initialX: number;
+  let initialY: number;
+
+  // 获取窗口的初始位置
+  const windowRect = windowEl.getBoundingClientRect();
+  const containerRect = containerEl.getBoundingClientRect();
+  
+  // 设置窗口的初始位置为居中
+  windowEl.style.position = 'absolute';
+  windowEl.style.left = `${(containerRect.width - windowRect.width) / 2}px`;
+  windowEl.style.top = `${(containerRect.height - windowRect.height) / 2}px`;
+
+  // 获取 header 元素
+  const headerEl = windowEl.querySelector('.win-header') as HTMLElement;
+  if (!headerEl) return;
+
+  // 鼠标按下事件
+  headerEl.addEventListener('mousedown', dragStart);
+
+  // 鼠标移动事件
+  containerEl.addEventListener('mousemove', drag);
+
+  // 鼠标释放事件
+  containerEl.addEventListener('mouseup', dragEnd);
+
+  function dragStart(e: MouseEvent) {
+    const windowRect = windowEl.getBoundingClientRect();
+    
+    initialX = e.clientX - windowRect.left;
+    initialY = e.clientY - windowRect.top;
+
+    if (e.target === headerEl) {
+      isDragging = true;
+      headerEl.style.cursor = 'move';
+    }
   }
-  // 父元素拖拽事件
-  parentEl.addEventListener("dragover", (e) => {
-    e.preventDefault() // 默认情况下，部分元素不允许其他元素拖拽到自身，确保父元素允许子元素拖拽
-  })
-  // 子元素拖拽事件
-  childEl.addEventListener("dragstart", (e) => {
-     // 记录拖拽时鼠标和父元素的相对位置
-    parentElPosition.x = e.clientX - parentEl.getBoundingClientRect().left;
-    parentElPosition.y = e.clientY - parentEl.getBoundingClientRect().top;
-  })
-  childEl.addEventListener("drag", (e) => {
-    // 获取正在拖拽的可拖拽元素
-    const target = e.target as HTMLElement;
-    if (target && target.tagName !== "A" && target.tagName !== "IMG" && target.tagName !== "INPUT") {// 排除默认可拖拽的元素
-      target.style.cursor = "move";
-      target.style.opacity = "0";
-      target.style.position = "absolute";
-      // 计算除鼠标移动的距离
-      target.style.left = `${e.clientX - parentElPosition.x}px`;
-      target.style.top = `${e.clientY - parentElPosition.y}px`;
+
+  function drag(e: MouseEvent) {
+    if (!isDragging) return;
+
+    e.preventDefault();
+
+    currentX = e.clientX - initialX;
+    currentY = e.clientY - initialY;
+
+    // 限制窗口不能拖出容器
+    const containerRect = containerEl.getBoundingClientRect();
+    const windowRect = windowEl.getBoundingClientRect();
+
+    // 限制左右边界
+    if (currentX < 0) {
+      currentX = 0;
+    } else if (currentX + windowRect.width > containerRect.width) {
+      currentX = containerRect.width - windowRect.width;
     }
-  })
-  childEl.addEventListener("dragend", (e) => {
-    // 获取正在拖拽的可拖拽元素
-    const target = e.target as HTMLElement;
-    if (target && target.tagName !== "A" && target.tagName !== "IMG" && target.tagName !== "INPUT") {// 排除默认可拖拽的元素
-      target.style.cursor = "default";
-      target.style.opacity = "1";
+
+    // 限制上下边界
+    if (currentY < 0) {
+      currentY = 0;
+    } else if (currentY + windowRect.height > containerRect.height) {
+      currentY = containerRect.height - windowRect.height;
     }
-  })
+
+    setTranslate(currentX, currentY);
+  }
+
+  function dragEnd() {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    headerEl.style.cursor = 'default';
+  }
+
+  function setTranslate(xPos: number, yPos: number) {
+    windowEl.style.left = `${xPos}px`;
+    windowEl.style.top = `${yPos}px`;
+  }
 }

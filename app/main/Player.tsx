@@ -1,51 +1,80 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Progress from '../components/Progress';
 
 export default function Player() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState('03:30');
+  const [currentTime, setCurrentTime] = useState('00:00');
   const [totalTime, setTotalTime] = useState('05:20');
+  const [volume, setVolume] = useState(80);
+  const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // 如果当前路径是播放详情页，则不显示播放器
+  if (pathname.startsWith('/main/song/')) {
+    return null;
+  }
+
+  // 模拟当前播放的歌曲
+  const currentSong = {
+    id: '1',
+    title: "Normal No More (小提琴版)",
+    artist: "Strictlyviolin/马克",
+    cover: "/default.png",
+  };
+
+  const handleSongClick = () => {
+    router.push(`/main/song/${currentSong.id}`);
+  };
+
+  // 音量控制
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(Number(e.target.value));
+  };
+
+  // 播放控制
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   return (
-    <div className="w-full flex items-center px-2 py-1 bg-white">
+    <div className="h-[82px] flex items-center justify-between px-4 bg-base-100">
       {/* 左侧：歌曲信息 */}
-      <div className="flex items-center min-w-0 w-64 mr-4">
-        <div className="w-12 h-12 rounded mr-3 overflow-hidden flex-shrink-0">
-          <img src="/default.png" alt="Album Cover" className="w-full h-full object-cover" />
+      <div 
+        className="flex items-center space-x-4 min-w-[200px] max-w-[300px] cursor-pointer group"
+        onClick={handleSongClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0 relative group">
+          <img 
+            src={currentSong.cover} 
+            alt="Album Cover" 
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+          />
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
-        <div className="min-w-0 overflow-hidden">
-          <p className="font-medium text-sm truncate">Normal No More (小提琴版)</p>
-          <p className="text-xs text-gray-500 truncate">- Strictlyviolin/马克</p>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-base truncate group-hover:text-red-500 transition-colors">{currentSong.title}</p>
+          <p className="text-sm text-gray-500 truncate">{currentSong.artist}</p>
         </div>
       </div>
 
       {/* 中间：播放控制 */}
-      <div className="flex-1 flex flex-col items-center">
-
-        {/* 进度条 */}
-        <div className="w-full flex items-center">
-          <span className="text-xs text-gray-500 w-10 text-right mr-2">{currentTime}</span>
-          <div className="flex-1 relative h-1 bg-gray-200 rounded-full">
-            <div
-              className="absolute left-0 top-0 h-full bg-red-500 rounded-full"
-              style={{ width: '90%' }}
-            ></div>
-            <div className="absolute left-[90%] top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full border-2 border-red-500 cursor-pointer"></div>
-          </div>
-          <span className="text-xs text-gray-500 w-10 text-left ml-2">{totalTime}</span>
-        </div>
-
+      <div className="flex-1 flex flex-col items-center max-w-2xl px-4 py-2">
         {/* 播放控制按钮 */}
-        <div className="flex items-center space-x-8 mb-2">
-          <button className="text-gray-600 hover:text-red-500">
-            <svg className="icon h-6 w-6" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4245">
-              <path d="M364.302083 465.602819L687.954365 218.588294c38.416414-29.327534 93.791393-1.929039 93.791392 46.396277v494.029051c0 48.325316-55.374979 75.725617-93.791392 46.398084L364.302083 558.397181c-30.600916-23.357989-30.600916-69.436372 0-92.794362zM238.945254 780.798397V451.684117v-164.562559c0-19.628152-5.904521-60.475733 17.057907-75.841215 25.523642-17.068744 59.747828 1.210165 59.747828 31.919454v493.676839c0 19.628152 5.915358 60.473927-17.047069 75.841215-25.53448 17.068744-59.758666-1.211971-59.758666-31.919454z" fill="#515151" p-id="4246"></path>
+        <div className="flex items-center justify-center space-x-6 mb-2">
+          <button className="text-gray-600 hover:text-red-500 transition-colors">
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
             </svg>
           </button>
           <button
-            className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center text-white hover:bg-red-600"
-            onClick={() => setIsPlaying(!isPlaying)}
+            className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500/20 transition-colors"
+            onClick={togglePlay}
           >
             {isPlaying ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
@@ -58,38 +87,66 @@ export default function Player() {
               </svg>
             )}
           </button>
-          <button className="text-gray-600 hover:text-red-500">
-            <svg className="icon w-6 h-6" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5390">
-              <path d="M655.706179 465.602819L332.053897 218.588294c-38.414608-29.327534-93.791393-1.929039-93.791392 46.396277v494.029051c0 48.325316 55.376785 75.725617 93.791392 46.398084l323.652282-247.014525c30.602722-23.357989 30.602722-69.436372 0-92.794362zM781.064814 780.798397V451.684117v-164.562559c0-19.628152 5.904521-60.475733-17.057907-75.841215-25.523642-17.068744-59.747828 1.210165-59.747828 31.919454v493.676839c0 19.628152-5.915358 60.473927 17.047069 75.841215 25.532673 17.068744 59.758666-1.211971 59.758666-31.919454z" fill="#515151" p-id="5391"></path>
+          <button className="text-gray-600 hover:text-red-500 transition-colors">
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M6 18V6h2v12zm10.5-6l-8.5 6V6z"/>
             </svg>
           </button>
         </div>
 
+        {/* 进度条 */}
+        <div className="w-full">
+          <Progress currentTime={currentTime} totalTime={totalTime} />
+        </div>
       </div>
 
-      {/* 右侧：功能按钮 */}
-      <div className="flex items-center space-x-4 w-48 justify-end">
-        <button className="text-gray-600 hover:text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
+      {/* 右侧：音量控制 */}
+      <div className="flex items-center space-x-3 min-w-[140px]">
+        <button 
+          className="text-gray-600 hover:text-red-500 transition-colors"
+          onClick={() => setVolume(volume === 0 ? 80 : 0)}
+        >
+          {volume === 0 ? (
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M3.63 3.63a.996.996 0 000 1.41L7.29 8.7 7 9H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71v-4.17l4.18 4.18c-.49.37-1.02.68-1.6.91-.36.15-.58.53-.58.92 0 .72.73 1.18 1.39.91.8-.33 1.55-.77 2.22-1.31l1.34 1.34a.996.996 0 101.41-1.41L5.05 3.63c-.39-.39-1.02-.39-1.42 0zM19 12c0 .82-.15 1.61-.41 2.34l1.53 1.53c.56-1.17.88-2.48.88-3.87 0-3.83-2.4-7.11-5.78-8.4-.59-.23-1.22.23-1.22.86v.19c0 .38.25.71.61.85C17.18 6.54 19 9.06 19 12zm-8.71-6.29l-.17.17L12 7.76V6.41c0-.89-1.08-1.33-1.71-.7zM16.5 12A4.5 4.5 0 0014 7.97v1.79l2.48 2.48c.01-.08.02-.16.02-.24z"/>
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+          )}
         </button>
-        <button className="text-gray-600 hover:text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-        </button>
-        <button className="text-gray-600 hover:text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <button className="text-gray-600 hover:text-red-500">
-        <svg className="icon h-5 w-5" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10863" width="16" height="16">
-          <path d="M260.256 356.576l204.288-163.968a32 32 0 0 1 52.032 24.96v610.432a32 32 0 0 1-51.968 24.992l-209.92-167.552H96a32 32 0 0 1-32-32v-264.864a32 32 0 0 1 32-32h164.256zM670.784 720.128a32 32 0 0 1-44.832-45.664 214.08 214.08 0 0 0 64.32-153.312 213.92 213.92 0 0 0-55.776-144.448 32 32 0 1 1 47.36-43.04 277.92 277.92 0 0 1 72.416 187.488 278.08 278.08 0 0 1-83.488 198.976zM822.912 858.88a32 32 0 1 1-45.888-44.608A419.008 419.008 0 0 0 896 521.152c0-108.704-41.376-210.848-114.432-288.384a32 32 0 0 1 46.592-43.872c84.16 89.28 131.84 207.04 131.84 332.256 0 127.84-49.76 247.904-137.088 337.728z" fill="#707070" p-id="10864"></path>
-        </svg>
-        </button>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="range range-xs range-red"
+        />
       </div>
+
+      <style jsx>{`
+        .range {
+          height: 2px;
+          background-color: #e5e7eb;
+          border-radius: 9999px;
+          appearance: none;
+          width: 100%;
+        }
+        .range::-webkit-slider-thumb {
+          appearance: none;
+          width: 10px;
+          height: 10px;
+          background-color: #ef4444;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .range::-webkit-slider-thumb:hover {
+          transform: scale(1.2);
+        }
+      `}</style>
     </div>
   );
 }
