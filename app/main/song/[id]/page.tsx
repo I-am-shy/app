@@ -2,16 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { use } from 'react';
 
 interface SongPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function SongPage({ params }: SongPageProps) {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
+  const resolvedParams = use(params);
 
   useEffect(() => {
     // 组件挂载后立即触发动画
@@ -28,7 +30,7 @@ export default function SongPage({ params }: SongPageProps) {
 
   // 模拟歌曲数据
   const song = {
-    id: params.id,
+    id: resolvedParams.id,
     title: "Normal No More (小提琴版)",
     artist: "Strictlyviolin/马克",
     cover: "/default.png",
