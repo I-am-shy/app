@@ -88,5 +88,4 @@ function verifyToken(token: string, secretKey: string) {
 // setTimeout(() => {
 //   console.log(verifyToken(token, secretKey) ? '验证通过' : '验证失败');
 // },5000);
-
 export { getToken, verifyToken }

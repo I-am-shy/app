@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
 
 
   // 需要登录的路由
-  const authRoutes = ['/main/my', '/main','/dashboard']
+  const authRoutes = ['/main','/main/my', '/main/song','/main/share','/main/player','/dashboard']
 
   // 已登录用户不能访问登录页
   if (pathname === '/login' && isLogin) {

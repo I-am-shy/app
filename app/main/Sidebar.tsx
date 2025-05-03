@@ -14,15 +14,17 @@ export default function Sidebar() {
   
   return (
     <div className="h-full bg-white">
-      <div className="px-4 py-4">
-        <div className="flex items-center space-x-2 select-none">
+      <Link href="/main/my">
+      <div className="px-4 py-4 hover:bg-gray-100">
+        <div className="flex items-center space-x-2 select-none ">
           <div className="w-8 h-8 bg-gray-200 rounded-full overflow-hidden">
             <img src="/default.png" alt="User" className="w-full h-full object-cover" />
           </div>
           <span className="font-medium text-sm">my music</span>
         </div>
       </div>
-      
+      </Link>
+
       {/* 路由导航 */}
       <ul className="menu w-full">
         {navigation.map(item => (
@@ -40,10 +42,10 @@ export default function Sidebar() {
       <div className="px-4 mt-6">
         <h3 className="text-xs text-gray-500 mb-2 select-none">我的音乐</h3>
       </div>
-      
-      <div className="px-4 mt-6">
-        <h3 className="text-xs text-gray-500 mb-2 select-none">创建的歌单</h3>
-      </div>
+      <ul className="menu w-full">
+        <li><Link href="/main/share">分享音乐</Link></li>
+      </ul>
+
     </div>
   );
 }
