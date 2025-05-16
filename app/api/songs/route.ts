@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import db from '@/app/lib/db'
 import { uploadFile, deleteFile } from '@/app/utils/flieUpload'
+import verifyToken from '@/app/utils/verifyToken'
 import { Song } from '@/app/lib/type'
 
 // GET /api/songs - 获取所有歌曲
 // GET /api/songs?title="title" - 获取单个歌曲
 export async function GET(request: NextRequest) {
+  
+  // 验证登录状态
+  if (! await verifyToken(request)) {
+    return NextResponse.json({ msg: "未登录",code: 401 }, { status: 401 })
+  }
+
   const title = request.nextUrl.searchParams.get('title')
   const data = title ? await db.getSong(title) : await db.getSongs()
 
@@ -18,6 +25,11 @@ export async function GET(request: NextRequest) {
 
 // POST /api/songs - 上传歌曲
 export async function POST(request: NextRequest){
+  // 验证登录状态
+  if (! await verifyToken(request)) {
+    return NextResponse.json({ msg: "未登录",code: 401 }, { status: 401 })
+  }
+
   // 获取歌曲信息和歌曲文件对象
   const formData = await request.formData() 
   const song = {} as Song
@@ -48,6 +60,12 @@ export async function POST(request: NextRequest){
 
 // DELETE /api/songs?title="title" - 删除歌曲
 export async function DELETE(request: NextRequest) {
+
+    // 验证登录状态
+    if (! ! await verifyToken(request)) {
+      return NextResponse.json({ msg: "未登录",code: 401 }, { status: 401 })
+    }
+
   const title = request.nextUrl.searchParams.get('title')
   if (!title) {
     return NextResponse.json({ msg: '歌曲名不能为空',code: 400 }, { status: 400 })
@@ -67,6 +85,9 @@ export async function DELETE(request: NextRequest) {
 
 // PUT /api/songs?title="title" - 更新歌曲
 export async function PUT(request: NextRequest) {
+
+
+  
   const formData = await request.formData()
   const song = {} as Song
   for (const [key, value] of formData.entries()) {

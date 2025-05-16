@@ -4,12 +4,14 @@ const sqlite = sqlite3.verbose()
 
 class Database {
   private db: sqlite3.Database
+  private initialized: boolean = false
   constructor(dbName: string) {
     const dbPath = "./"+dbName+".db"
     this.db = new sqlite.Database(dbPath, (err) => {
       if (err) console.error('数据库连接失败：', err)
       else console.log('数据库连接成功')
     })
+
   }
 
   // 执行 SQL 的通用方法
@@ -56,7 +58,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('用户表连接成功')
+    // console.log('用户表连接成功')
   }
 
   // 创建音乐表
@@ -71,7 +73,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('音乐表连接成功')
+    // console.log('音乐表连接成功')
   }
 
   // 创建评论表
@@ -88,7 +90,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('评论表连接成功')
+    // console.log('评论表连接成功')
   }
 
   // 创建收藏表
@@ -103,7 +105,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('收藏表连接成功')
+    // console.log('收藏表连接成功')
   }
 
   // 创建公告表
@@ -117,7 +119,7 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('公告表连接成功')
+    // console.log('公告表连接成功')
   }
 
   // 创建主题表
@@ -129,22 +131,25 @@ class Database {
       )
     `
     await this.run(sql)
-    console.log('主题表连接成功')
+    // console.log('主题表连接成功')
   }
 
   // 初始化所有表
   async initTables() {
-    try {
-      await this.createUserTable()
-      await this.createSongTable()
-      await this.createCommentTable()
-      await this.createFavoriteTable()
-      await this.createAnnouncementTable()
-      await this.createThemeTable()
-      console.log('所有数据表初始化完成')
-    } catch (err) {
-      console.error('数据表初始化失败：', err)
-      throw err
+    if(!this.initialized){
+      try {
+        await this.createUserTable()
+        await this.createSongTable()
+        await this.createCommentTable()
+        await this.createFavoriteTable()
+        await this.createAnnouncementTable()
+        await this.createThemeTable()
+        // console.log('所有数据表初始化完成')
+        this.initialized = true
+      } catch (err) {
+        console.error('数据表初始化失败：', err)
+        throw err
+      }
     }
   }
 

@@ -1,9 +1,28 @@
-import { Suspense } from 'react';
+"use client"
+
+import { Suspense, useEffect, useState } from 'react';
 import Skeleton from '../components/Skeleton';
 import Card from '../components/Card';
 import Carousel from '../components/Carousel';
 
+
+type Playlist = {
+  id: number;
+  title: string;
+  image: string;
+  count: string;
+}
+type Song = {
+  song_id: number;
+  file_path: string;
+  song_artist: string;
+  song_lyric: string;
+  song_title: string;
+}
+
 export default function Home() {
+
+
 
   const banners = [
     { id: 1, image: '/default.png', title: '杨和苏KeyNG新歌' },
@@ -11,14 +30,34 @@ export default function Home() {
     { id: 3, image: '/default.png', title: '热门推荐' },
   ];
 
-  const playlists = [
-    { id: 1, title: '每日歌曲推荐', image: '/default.png', count: '7' },
-    { id: 2, title: '私人雷达', image: '/_default.png', count: '215亿' },
-    { id: 3, title: '网易云热搜歌曲100%超级好听推荐', image: '/default.png', count: '1191万' },
-    { id: 4, title: '华语流行100首，一人一首代表作', image: '/_default.png', count: '650万' },
-    { id: 5, title: '90后回忆杀！这200首老歌每一都戳中泪点', image: '/default.png', count: '539万' },
-  ];
+  // const playList = [
+  //   { id: 1, title: '每日歌曲推荐', image: '/default.png', count: '7' },
+  //   { id: 2, title: '私人雷达', image: '/_default.png', count: '215亿' },
+  //   { id: 3, title: '网易云热搜歌曲100%超级好听推荐', image: '/default.png', count: '1191万' },
+  //   { id: 4, title: '华语流行100首，一人一首代表作', image: '/_default.png', count: '650万' },
+  //   { id: 5, title: '90后回忆杀！这200首老歌每一都戳中泪点', image: '/default.png', count: '539万' },
+  // ];
 
+  const [playList, setPlayList] = useState<Playlist[]>([])
+
+  useEffect(() => {
+
+    async function getSongInfo() {
+      const res = await fetch('/api/songs')
+      const data = await res.json()
+      console.log(data);
+
+      setPlayList(data.data.map((item: Song) => {
+        return {
+          id: item.song_id,
+          title: item.song_title,
+          image: "/default.png",
+          count: 0
+        }
+      }))
+    }
+    getSongInfo()
+  }, [])
 
   return (
     <div className="w-full">
@@ -54,7 +93,7 @@ export default function Home() {
           }>
             {/* 实际内容 */}
             {
-              playlists.map(async (playlist) => {
+              playList.map(async (playlist) => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 return (
                   <Card playlist={playlist} />

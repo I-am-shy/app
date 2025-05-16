@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
+// 在中间件导入数据库连接，确保数据库在ui渲染前已经初始化
+import db from './app/lib/db'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
