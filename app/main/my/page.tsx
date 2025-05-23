@@ -1,10 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function MyPage() {
+  const [user,setUser] = useState({name:'用户名',avatar:'/default.png',info:"这里是个人简介，可以写一些简短的介绍。"})
   const router = useRouter();
 
+  useEffect(() => {
+    async function getUserInfo() {
+      const res = await fetch('/api/users?name=test')
+      const data = await res.json()
+      console.log(data);
+      if(data.code !== 200) {
+        alert(data.msg)
+        return
+      }
+      setUser({name:data.data.name,avatar:data.data.avatar,info:data.data.info})
+    }
+    getUserInfo()
+  },[])
   const handleLogout = async () => {
     try {
       const response = await fetch('/api/auth', {
@@ -42,12 +57,12 @@ export default function MyPage() {
           <div className="flex flex-col lg:flex-row items-center p-8">
             <div className="avatar mb-6 lg:mb-0">
               <div className="w-28 rounded-full ring-2 ring-red-500 ring-offset-2">
-                <img src="/default.png" alt="用户头像" className="object-cover" />
+                <img src={user.avatar} alt="用户头像" className="object-cover" />
               </div>
             </div>
             <div className="flex-1 text-center lg:text-left lg:ml-8">
-              <h2 className="text-2xl font-bold text-gray-800">用户名</h2>
-              <p className="text-gray-500 mt-3">这里是个人简介，可以写一些简短的介绍。</p>
+              <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+              <p className="text-gray-500 mt-3">{user.info}</p>
               <div className="mt-6">
                 <button className="btn bg-white text-red-500 hover:bg-red-500 hover:text-white border-red-500 transition-all duration-300">
                   编辑资料

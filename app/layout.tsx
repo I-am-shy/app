@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "音乐播放器",
-  description: "一个简单的音乐播放器应用",
+  title: "在线音乐平台",
+  description: "在线音乐平台",
 };
 
 export default function RootLayout({

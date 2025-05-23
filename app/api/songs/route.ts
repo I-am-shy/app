@@ -62,7 +62,7 @@ export async function POST(request: NextRequest){
 export async function DELETE(request: NextRequest) {
 
     // 验证登录状态
-    if (! ! await verifyToken(request)) {
+    if (!await verifyToken(request)) {
       return NextResponse.json({ msg: "未登录",code: 401 }, { status: 401 })
     }
 

@@ -5,7 +5,7 @@ import path from 'path'
 const FILE_CONFIG = {
   image: {
     allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-    maxSize: 5 * 1024 * 1024, // 5MB
+    maxSize: 5 * 1024 * 1024, // 10MB
     uploadDir: 'images'
   },
   audio: {
@@ -15,7 +15,7 @@ const FILE_CONFIG = {
   },
   avatar: {
     allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-    maxSize: 2 * 1024 * 1024, // 2MB
+    maxSize: 2 * 1024 * 1024, // 20MB
     uploadDir: 'avatars'
   }
 }

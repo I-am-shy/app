@@ -21,6 +21,21 @@ export default function SongsPage() {
     fetchSongs()
   }, [])
 
+  async function delSong(title: string) {
+    const res = await fetch(`/api/songs?title=${title}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const data = await res.json()
+    console.log(data)
+    if(data.code === 200) {
+      setSongs(songs.filter(song => song.song_title !== title)) 
+    }
+    alert(data.msg)
+  }
+
   return (
     <>
       <div>
@@ -75,7 +90,7 @@ export default function SongsPage() {
                         <div>{song.file_path}</div>
                       </td>
                       <td>
-                        <button className="btn btn-sm">编辑</button>
+                        <button className="btn btn-sm" onClick={()=>{delSong(song.song_title)}}>删除</button>
                       </td>
                     </tr>)
                 })

@@ -67,11 +67,19 @@ export default function SharePage() {
         cover: coverFile,
         ...form
       });
-      
+      const formData = new FormData();
+      formData.append('file_path', musicFile);
+      formData.append('song_title', form.title);
+      formData.append('song_artist', form.artist);
+      formData.append('song_lyric', form.lyrics);
       // 模拟上传延迟
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      alert('上传成功！');
+      // await new Promise(resolve => setTimeout(resolve, 1500));
+      const res = await fetch("/api/songs",{
+        method:"POST",
+        body: formData,
+      })
+      const data = await res.json();
+      alert(data.msg);
       // 重置表单
       setMusicFile(null);
       setCoverFile(null);

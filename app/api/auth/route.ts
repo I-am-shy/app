@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     const tokenCookie = request.cookies.get('token')
     
     if (!tokenCookie || !tokenCookie.value) {
+      // 如果验证失败，清除token返回401
+      request.cookies.delete('token')
       return NextResponse.json({ code: 401, message: '未登录' })
     }
 
@@ -23,6 +25,8 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Token verification error:', error)
+    // 如果验证失败，清除token返回401
+    request.cookies.delete('token')
     return NextResponse.json({ code: 401, message: '验证出错' })
   }
 }

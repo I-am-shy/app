@@ -1,6 +1,7 @@
 "use client"
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState,useContext} from 'react';
+import { songContext } from '../utils/songContext';
 import Skeleton from '../components/Skeleton';
 import Card from '../components/Card';
 import Carousel from '../components/Carousel';
@@ -22,8 +23,6 @@ type Song = {
 
 export default function Home() {
 
-
-
   const banners = [
     { id: 1, image: '/default.png', title: '杨和苏KeyNG新歌' },
     { id: 2, image: '/_default.png', title: '新歌首发' },
@@ -39,6 +38,7 @@ export default function Home() {
   // ];
 
   const [playList, setPlayList] = useState<Playlist[]>([])
+  const [playSong,setPlaySong ]= useContext(songContext)
 
   useEffect(() => {
 
@@ -96,7 +96,7 @@ export default function Home() {
               playList.map(async (playlist) => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 return (
-                  <Card playlist={playlist} />
+                  <Card playlist={playlist} setSong={setPlaySong} />
                 )
               })
             }

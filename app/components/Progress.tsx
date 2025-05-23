@@ -1,16 +1,20 @@
+"use client"
+
+import { useEffect, useState } from "react";
 interface ProgressProps {
   currentTime: string;
   totalTime: string;
 }
 
 export default function Progress({ currentTime, totalTime }: ProgressProps) {
-  if (!currentTime) {
-    currentTime = "00:00";
-  }
-  if (!totalTime) {
-    totalTime = "00:00";
-  }
-  const currentVal = parseInt(Number(currentTime) / Number(totalTime) * 100+"")
+function timeToDecimal(time:string) {
+  const [minutes, seconds] = time.split(':').map(parseFloat);
+  return Math.floor(minutes * 60 + seconds);
+}
+  const [currentVal,setCurrentVal] = useState(timeToDecimal(currentTime) /timeToDecimal(totalTime) * 100)
+  useEffect(()=>{
+    setCurrentVal(timeToDecimal(currentTime) /timeToDecimal(totalTime) * 100)
+  },[currentTime])
 
   return (
     <div className="w-full flex items-center px-2">

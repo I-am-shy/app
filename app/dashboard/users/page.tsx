@@ -20,6 +20,21 @@ export default function UsersPage() {
 
     fetchUsers()
   }, [])
+
+  async function delUser(username: string) {
+    const res = await fetch(`/api/users?name=${username}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }) 
+    const data = await res.json()
+    if(data.code === 200) {
+      setUsers(users.filter(user => user.name !== username)) 
+    }
+    alert(data.msg)
+  }
+
   return (
     <div>
       <h1>用户管理</h1>
@@ -69,7 +84,7 @@ export default function UsersPage() {
                   <td>{user.username}</td>
                   <td>{user.info}</td>
                   <td>
-                    <button className="btn btn-sm">编辑</button>
+                    <button className="btn btn-sm" onClick={()=>{delUser(user.name)}}>删除</button>
                   </td>
                 </tr>)
               })
