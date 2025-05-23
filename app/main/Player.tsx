@@ -7,6 +7,7 @@ import Progress from '../components/Progress';
 
 export default function Player() {
   const audio = useRef(null)
+  const player = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState('00:00');
   const [totalTime, setTotalTime] = useState('00:00');
@@ -50,14 +51,10 @@ export default function Player() {
       })
   }, [playSong])
 
-  // 如果当前路径是播放详情页，则不显示播放器
-  if (pathname.startsWith('/main/song/')) {
-    return null;
-  }
-
+ 
   // 跳转到播放详细页
   const handleSongClick = () => {
-    router.push(`/main/song/${currentSong.song_id}`);
+    router.push(`/main/song/${currentSong.song_title}`);
   };
 
 
@@ -96,8 +93,13 @@ export default function Player() {
     }
   }, [])
 
+ // 如果当前路径是播放详情页，则不显示播放器
+  if (pathname.startsWith('/main/song/')) {
+
+  }
+
   return (
-    <div className="h-[82px] flex items-center justify-between px-4 bg-base-100">
+    <div style={{display:pathname.startsWith('/main/song/')?"none":"flex"}} className="h-[82px] flex items-center justify-between px-4 bg-base-100" ref={player}>
       {/* 左侧：歌曲信息 */}
       <div
         className="flex items-center space-x-4 min-w-[200px] max-w-[300px] cursor-pointer group"

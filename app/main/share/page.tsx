@@ -98,6 +98,21 @@ export default function SharePage() {
     }
   };
 
+  async function getLrc(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    if(form.title !==''){
+      const res = await fetch(`https://www.hhlqilongzhu.cn/api/dg_geci.php?msg=${decodeURIComponent(form.title)}&n=1&type=json`)
+      const data = await res.text();
+      // console.log(form.title,data);
+      setForm((val)=>{
+        return {
+          ...val,
+          lyrics: data.split("\n").toSpliced(0,5).join("\n")
+        }
+      })
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <h1 className="text-2xl font-bold mb-8">分享音乐</h1>
@@ -198,9 +213,10 @@ export default function SharePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-sm font-medium text-gray-700 mb-1">
               歌词
             </label>
+            <button className='btn ml-10' onClick={getLrc}>获取歌词</button>
             <textarea
               name="lyrics"
               value={form.lyrics}

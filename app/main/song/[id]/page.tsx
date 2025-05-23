@@ -31,6 +31,42 @@ export default function SongPage({ params }: SongPageProps) {
   const scrollRef = useRef<ScrollableDiv>(null);
   const resolvedParams = use(params);
 
+  const [song, setSong] = useState({
+    song_id: 1,
+    song_title: "Normal No More ",
+    song_artist: "马克",
+    cover: "/default.png",
+    duration: "05:20",
+    lyrics: [
+      { time: "00:00", text: "歌词加载中..." },
+      { time: "00:01", text: "Normal No More" },
+      // 更多歌词...
+    ]
+  })
+  useEffect(() => {
+    async function getSongInfo() {
+      const res = await fetch('/api/songs?title=' + decodeURIComponent(resolvedParams.id))
+      const data = await res.json()
+      console.log(data);
+      if (data.code === 200) {
+
+        setSong((val) => {
+          return {
+            ...val,
+            ...data.data,
+            lyrics: data.data.song_lyric.split('\n').map((item: string) => {
+              const [time, text] = item.split(']');
+                return { time: time.slice(1), text: text.trim() };
+              
+            }).filter((item: { time: string; text: string }) => {
+              return item.text !== '';
+            })
+          }
+        })
+      }
+    }
+    getSongInfo()
+  }, [])
   // 模拟评论数据
   const comments: Comment[] = [
     {
@@ -56,6 +92,7 @@ export default function SongPage({ params }: SongPageProps) {
     }
   ];
 
+
   useEffect(() => {
     setIsVisible(true);
 
@@ -65,15 +102,15 @@ export default function SongPage({ params }: SongPageProps) {
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
         // 当滚动到一定位置时显示评论区
         setShowComments(scrollTop > (scrollHeight - clientHeight) / 2);
-        
+
         // 添加滚动中的类
         scrollRef.current.classList.add('is-scrolling');
-        
+
         // 清除之前的定时器
         if (scrollRef.current.scrollTimer) {
           window.clearTimeout(scrollRef.current.scrollTimer);
         }
-        
+
         // 设置新的定时器
         scrollRef.current.scrollTimer = window.setTimeout(() => {
           scrollRef.current?.classList.remove('is-scrolling');
@@ -104,25 +141,11 @@ export default function SongPage({ params }: SongPageProps) {
     }, 300);
   };
 
-  // 模拟歌曲数据
-  const song = {
-    id: resolvedParams.id,
-    title: "Normal No More (小提琴版)",
-    artist: "Strictlyviolin/马克",
-    cover: "/default.png",
-    duration: "05:20",
-    lyrics: [
-      { time: "00:00", text: "歌词加载中..." },
-      { time: "00:01", text: "Normal No More" },
-      { time: "00:05", text: "小提琴版" },
-      // 更多歌词...
-    ]
-  };
 
   return (
     <>
       {/* 主要内容区域 */}
-      <div 
+      <div
         className={`absolute inset-x-0 bottom-[82px] bg-base-100/95 backdrop-blur-xl transition-all duration-300 ease-in-out z-40
           ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}
         style={{
@@ -133,7 +156,7 @@ export default function SongPage({ params }: SongPageProps) {
         <div className="flex flex-col h-full max-h-full">
           {/* 顶部栏 */}
           <div className="flex items-center justify-between px-6 py-4 border-b backdrop-blur-lg bg-base-100/50 sticky top-0 z-50">
-            <button 
+            <button
               onClick={handleClose}
               className="btn btn-ghost btn-sm"
             >
@@ -146,7 +169,7 @@ export default function SongPage({ params }: SongPageProps) {
           </div>
 
           {/* 滚动内容区域 */}
-          <div 
+          <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto bg-gray-50 scrollbar-default"
           >
@@ -158,22 +181,22 @@ export default function SongPage({ params }: SongPageProps) {
                   <div className="w-[250px] h-[250px]">
                     <img
                       src={song.cover}
-                      alt={song.title}
+                      alt={song.song_title}
                       className="w-full h-full object-cover rounded-lg shadow-lg"
                     />
                   </div>
                 </div>
 
                 {/* 右侧信息区域 */}
-                <div className="flex-1 flex flex-col items-center justify-center min-h-[500px]">
+                <div className=" w-[800px] h-[400px] flex-1 flex flex-col items-center justify-center min-h-[500px]">
                   {/* 歌曲信息 */}
                   <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold mb-3 text-gray-800">{song.title}</h2>
-                    <p className="text-gray-500">{song.artist}</p>
+                    <h2 className="text-3xl font-bold mb-3 text-gray-800">{song.song_title}</h2>
+                    <p className="text-gray-500">{song.song_artist}</p>
                   </div>
 
                   {/* 歌词区域 */}
-                  <div className="w-[80%] flex-1 flex flex-col justify-center">
+                  <div className=" flex-1 flex flex-col justify-center overflow-y-auto">
                     {song.lyrics.map((line, index) => (
                       <p
                         key={index}
@@ -190,7 +213,7 @@ export default function SongPage({ params }: SongPageProps) {
                     <div className="w-full h-1 bg-gray-200 rounded-full">
                       <div className="w-1/3 h-full bg-red-500 rounded-full"></div>
                     </div>
-                    
+
                     {/* 时间显示 */}
                     <div className="flex justify-between text-sm text-gray-500">
                       <span>00:00</span>
@@ -205,8 +228,9 @@ export default function SongPage({ params }: SongPageProps) {
                         </svg>
                       </button>
                       <button className="text-red-500 hover:text-red-600 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="6" y="4" width="4" height="16" rx="1" />
+                          <rect x="14" y="4" width="4" height="16" rx="1" />
                         </svg>
                       </button>
                       <button className="text-gray-600 hover:text-red-500 transition-colors">
@@ -220,7 +244,7 @@ export default function SongPage({ params }: SongPageProps) {
               </div>
 
               {/* 评论区域 */}
-              <div 
+              <div
                 className={`w-full max-w-4xl mx-auto transition-all duration-500 transform
                   ${showComments ? 'translate-y-0 opacity-100' : 'translate-y-1/2 opacity-0'}`}
               >
@@ -230,7 +254,7 @@ export default function SongPage({ params }: SongPageProps) {
                   </svg>
                   评论区
                 </h3>
-                
+
                 <div className="space-y-4 pb-6">
                   {comments.map((comment) => (
                     <div key={comment.id} className="bg-white rounded-lg p-4 shadow-sm">
@@ -260,7 +284,7 @@ export default function SongPage({ params }: SongPageProps) {
       </div>
 
       {/* 底部评论输入区域 */}
-      <div 
+      <div
         className={`absolute bottom-0 left-0 right-0 bg-white border-t transition-all duration-500 z-50
           ${isVisible ? (showComments ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0') : 'translate-y-full opacity-0'}`}
       >
