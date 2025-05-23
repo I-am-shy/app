@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState,useContext} from 'react';
+import { Suspense, useEffect, useState,useContext, useMemo} from 'react';
 import { songContext } from '../utils/songContext';
 import Skeleton from '../components/Skeleton';
 import Card from '../components/Card';
@@ -39,6 +39,10 @@ export default function Home() {
 
   const [playList, setPlayList] = useState<Playlist[]>([])
   const [playSong,setPlaySong ]= useContext(songContext)
+  const memoPlayList = useMemo(() => {
+    return playList.map((item) => {
+      return item
+    })}, [playList])
 
   useEffect(() => {
 
@@ -93,8 +97,7 @@ export default function Home() {
           }>
             {/* 实际内容 */}
             {
-              playList.map(async (playlist) => {
-                await new Promise(resolve => setTimeout(resolve, 1000));
+              memoPlayList.map(async (playlist) => {
                 return (
                   <Card playlist={playlist} setSong={setPlaySong} />
                 )

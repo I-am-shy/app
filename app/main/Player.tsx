@@ -5,7 +5,8 @@ import { songContext } from '../utils/songContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Progress from '../components/Progress';
 
-export default function Player() {
+
+export default function Player({ getSongTime }: any) {
   const audio = useRef(null)
   const player = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -51,7 +52,8 @@ export default function Player() {
       })
   }, [playSong])
 
- 
+
+
   // 跳转到播放详细页
   const handleSongClick = () => {
     router.push(`/main/song/${currentSong.song_title}`);
@@ -78,12 +80,16 @@ export default function Player() {
         (audio.current as HTMLAudioElement).play();
         const audioElement = audio.current as HTMLAudioElement;
         setTotalTime(formatTime(audioElement.duration))
-
+        getSongTime(formatTime(audioElement.currentTime), formatTime(audioElement.duration))
       } else {
         (audio.current as HTMLAudioElement).pause();
       }
     }
   }, [isPlaying])
+  useEffect(() => {
+    getSongTime(currentTime, totalTime)
+  },[currentTime])
+  // 播放进度控制
   useEffect(() => {
     if (audio.current) {
       const audioElement = audio.current as HTMLAudioElement;
@@ -91,15 +97,16 @@ export default function Player() {
         setCurrentTime(formatTime(audioElement.currentTime))
       }
     }
+    getSongTime(currentTime, totalTime)
   }, [])
 
- // 如果当前路径是播放详情页，则不显示播放器
+  // 如果当前路径是播放详情页，则不显示播放器
   if (pathname.startsWith('/main/song/')) {
 
   }
 
   return (
-    <div style={{display:pathname.startsWith('/main/song/')?"none":"flex"}} className="h-[82px] flex items-center justify-between px-4 bg-base-100" ref={player}>
+    <div style={{ display: pathname.startsWith('/main/song/') ? "none" : "flex" }} className="h-[82px] flex items-center justify-between px-4 bg-base-100" ref={player}>
       {/* 左侧：歌曲信息 */}
       <div
         className="flex items-center space-x-4 min-w-[200px] max-w-[300px] cursor-pointer group"
@@ -162,7 +169,7 @@ export default function Player() {
       <div className="flex items-center space-x-3 min-w-[140px]">
         <button
           className="text-gray-600 hover:text-red-500 transition-colors"
-          onClick={() =>{ setVolume(volume === 0 ? 80 : 0)}}
+          onClick={() => { setVolume(volume === 0 ? 80 : 0) }}
         >
           {volume === 0 ? (
             <svg className="w-5 h-5" viewBox="0 0 24 24">

@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { use } from 'react';
-
+import Progress from "@/app/components/Progress";
+import { SongTimeContext } from "@/app/utils/songContext";
 interface SongPageProps {
   params: Promise<{
     id: string;
@@ -29,8 +30,10 @@ export default function SongPage({ params }: SongPageProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const scrollRef = useRef<ScrollableDiv>(null);
+  const input = useRef<HTMLInputElement>(null);
   const resolvedParams = use(params);
-
+  const { currentTime, totalTime } = useContext(SongTimeContext)
+  const [user, setUser] = useState({ name: '用户名', avatar: '/default.png', info: "这里是个人简介，可以写一些简短的介绍。" })
   const [song, setSong] = useState({
     song_id: 1,
     song_title: "Normal No More ",
@@ -56,8 +59,8 @@ export default function SongPage({ params }: SongPageProps) {
             ...data.data,
             lyrics: data.data.song_lyric.split('\n').map((item: string) => {
               const [time, text] = item.split(']');
-                return { time: time.slice(1), text: text.trim() };
-              
+              return { time: time.slice(1), text: text.trim() };
+
             }).filter((item: { time: string; text: string }) => {
               return item.text !== '';
             })
@@ -66,9 +69,23 @@ export default function SongPage({ params }: SongPageProps) {
       }
     }
     getSongInfo()
+
+    async function getUserInfo() {
+      const res = await fetch('/api/users?name=test')
+      const data = await res.json()
+      console.log(data);
+      if (data.code !== 200) {
+        alert(data.msg)
+        return
+      }
+      setUser({ name: data.data.name, avatar: data.data.avatar, info: data.data.info })
+    }
+    getUserInfo()
+
+    console.log(currentTime, totalTime);
   }, [])
   // 模拟评论数据
-  const comments: Comment[] = [
+  const [comments, setComments] = useState<Comment[]>([
     {
       id: '1',
       userName: '音乐爱好者',
@@ -90,8 +107,22 @@ export default function SongPage({ params }: SongPageProps) {
       content: '这个改编版本很有新意，保留了原曲的精髓同时又加入了新的元素',
       timestamp: '2024-03-15 12:15'
     }
-  ];
+  ])
 
+  function commit(){
+    setComments((val) => {
+      return [
+        ...val,
+        {
+          id: String(val.length + 1),
+          userName: user.name,
+          userAvatar: user.avatar,
+          content: input.current ? input.current.value : "",
+          timestamp: new Date().toLocaleString()
+        }
+      ]
+    })
+  }
 
   useEffect(() => {
     setIsVisible(true);
@@ -175,7 +206,7 @@ export default function SongPage({ params }: SongPageProps) {
           >
             <div className="p-6">
               {/* 播放器部分 */}
-              <div className="flex min-h-[600px] gap-6 items-center justify-center mb-20">
+              <div className="flex min-h-[600px] gap-6  mb-20">
                 {/* 左侧封面图片 */}
                 <div className="w-1/2 flex items-center justify-center">
                   <div className="w-[250px] h-[250px]">
@@ -188,7 +219,7 @@ export default function SongPage({ params }: SongPageProps) {
                 </div>
 
                 {/* 右侧信息区域 */}
-                <div className=" w-[800px] h-[400px] flex-1 flex flex-col items-center justify-center min-h-[500px]">
+                <div className=" w-[80%] h-[500px] flex flex-col items-center min-h-[500px]">
                   {/* 歌曲信息 */}
                   <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold mb-3 text-gray-800">{song.song_title}</h2>
@@ -196,7 +227,7 @@ export default function SongPage({ params }: SongPageProps) {
                   </div>
 
                   {/* 歌词区域 */}
-                  <div className=" flex-1 flex flex-col justify-center overflow-y-auto">
+                  <div className=" flex-1 flex flex-col  overflow-y-auto">
                     {song.lyrics.map((line, index) => (
                       <p
                         key={index}
@@ -210,15 +241,8 @@ export default function SongPage({ params }: SongPageProps) {
                   {/* 播放控件 */}
                   <div className="w-[80%] flex flex-col gap-3 mt-10">
                     {/* 进度条 */}
-                    <div className="w-full h-1 bg-gray-200 rounded-full">
-                      <div className="w-1/3 h-full bg-red-500 rounded-full"></div>
-                    </div>
 
-                    {/* 时间显示 */}
-                    <div className="flex justify-between text-sm text-gray-500">
-                      <span>00:00</span>
-                      <span>{song.duration}</span>
-                    </div>
+                    <Progress currentTime={currentTime} totalTime={totalTime} />
 
                     {/* 控制按钮 */}
                     <div className="flex items-center justify-center gap-8 mt-2">
@@ -288,25 +312,28 @@ export default function SongPage({ params }: SongPageProps) {
         className={`absolute bottom-0 left-0 right-0 bg-white border-t transition-all duration-500 z-50
           ${isVisible ? (showComments ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0') : 'translate-y-full opacity-0'}`}
       >
-        <div className="max-w-7xl mx-auto px-4 h-[82px] flex items-center">
-          <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mr-3">
-            <img
-              src="/default.png"
-              alt="用户头像"
-              className="w-full h-full object-cover"
-            />
+          <div className="max-w-7xl mx-auto px-4 h-[82px] flex items-center">
+
+            <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mr-3">
+              <img
+                src={user.avatar}
+                alt="用户头像"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 bg-gray-100 rounded-full flex items-center px-4 h-10">
+              <input
+                ref={input}
+                type="text"
+                placeholder="发送评论..."
+                className="flex-1 bg-transparent border-none outline-none text-sm"
+              />
+            </div>
+            <button onClick={commit} className="ml-3 px-5 h-10 bg-red-500 text-white text-sm rounded-full hover:bg-red-600 transition-colors">
+              发送
+            </button>
           </div>
-          <div className="flex-1 bg-gray-100 rounded-full flex items-center px-4 h-10">
-            <input
-              type="text"
-              placeholder="发送评论..."
-              className="flex-1 bg-transparent border-none outline-none text-sm"
-            />
-          </div>
-          <button className="ml-3 px-5 h-10 bg-red-500 text-white text-sm rounded-full hover:bg-red-600 transition-colors">
-            发送
-          </button>
-        </div>
+     
       </div>
 
       {/* 添加全局样式 */}
